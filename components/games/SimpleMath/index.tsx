@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 import { arrayFromNum, randInt } from "../../../utils";
+import listReactFiles from "list-react-files";
 //config
 const config = {
   max: 20,
@@ -19,6 +20,18 @@ const TITLE_SUCCESS = "Good Job!";
 
 const [defaultFirstNum, defaultSecondNum] = generateNums();
 
+const cartoons = [
+  "/amongus-cyan.png",
+  "/amongus-green.png",
+  "/boy.png",
+  "/butterfly.png",
+  "/cat.png",
+  "/pencil.webp",
+  "/rabbit.png",
+  "/rubiks-cube.png",
+  "/samsung-phone.png",
+];
+
 export const SimpleMath: FunctionComponent = () => {
   const [firstNum, setFirstNum] = useState(defaultFirstNum);
   const [secondNum, setSecondNum] = useState(defaultSecondNum);
@@ -27,8 +40,10 @@ export const SimpleMath: FunctionComponent = () => {
   const [answer, setAnswer] = useState(undefined);
   const [score, setScore] = useState(0);
   const [title, setTitle] = useState(TITLE_MAIN);
+  const [cartoonIndex, setCartoonIndex] = useState(0);
 
   useEffect(() => {
+    setCartoonIndex(cartoonIndex + 1);
     setNumArray(arrayFromNum(firstNum));
     const secondNum = randInt(config.min, firstNum - 1);
     setSecondNum(secondNum);
@@ -126,9 +141,12 @@ export const SimpleMath: FunctionComponent = () => {
           return (
             <div
               key={index}
-              className="mx-2 relative w-24 h-24 flex justify-center items-center"
+              className="m-2 h-24 w-24 relative flex justify-center items-center"
             >
-              <img className="w-full" src="./mcqueen.png" />
+              <img
+                className="max-w-full max-h-full"
+                src={cartoons[cartoonIndex % cartoons.length]}
+              />
               <div
                 style={{
                   visibility:
