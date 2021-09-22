@@ -111,7 +111,7 @@ export const SimpleMath: FunctionComponent = () => {
               key={index}
               className="mx-2 relative w-24 h-24 flex justify-center items-center"
             >
-              <img className="w-full" src="/mcqueen.png" />
+              <img className="w-full" src="./mcqueen.png" />
               <div
                 style={{
                   visibility:
