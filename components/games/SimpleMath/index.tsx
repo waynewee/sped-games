@@ -13,6 +13,10 @@ const generateNums = () => {
   return [firstNum, secondNum];
 };
 
+const TITLE_MAIN = "Let's Subtract!";
+const TITLE_ERROR = "Try Again!";
+const TITLE_SUCCESS = "Good Job!";
+
 const [defaultFirstNum, defaultSecondNum] = generateNums();
 
 export const SimpleMath: FunctionComponent = () => {
@@ -22,6 +26,7 @@ export const SimpleMath: FunctionComponent = () => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [answer, setAnswer] = useState(undefined);
   const [score, setScore] = useState(0);
+  const [title, setTitle] = useState(TITLE_MAIN);
 
   useEffect(() => {
     setNumArray(arrayFromNum(firstNum));
@@ -34,6 +39,14 @@ export const SimpleMath: FunctionComponent = () => {
       inputRef.current.value = undefined;
     }
   }, [firstNum]);
+
+  useEffect(() => {
+    if (showAnswer) {
+      setTitle(TITLE_SUCCESS);
+    } else {
+      setTitle(TITLE_MAIN);
+    }
+  }, [showAnswer]);
 
   const gameBoardRef = useRef();
   const inputRef = useRef();
@@ -56,7 +69,10 @@ export const SimpleMath: FunctionComponent = () => {
     if (firstNum - secondNum === answer) {
       setScore(score + 1);
       setShowAnswer(true);
+      return;
     }
+
+    setTitle(TITLE_ERROR);
   };
 
   const handleKeyPress = (e) => {
@@ -69,11 +85,11 @@ export const SimpleMath: FunctionComponent = () => {
     <>
       <div className="fixed top-8 right-16">
         <div className="flex items-center">
-          <img className="h-10 animate-starSpin" src={"/smiling-star.png"} />
-          <div className="ml-4 text-4xl font-medium">{score}</div>
+          <img className="h-24 animate-starSpin" src={"/smiling-star.png"} />
+          <div className="ml-4 text-8xl font-medium">{score}</div>
         </div>
       </div>
-      <div className="text-6xl font-medium mb-12">Let's Subtract!</div>
+      <div className="text-6xl font-medium mb-12">{title}</div>
       <div className="flex mb-12 justify-center items-center text-5xl">
         <div suppressHydrationWarning className="">
           {firstNum} - {secondNum} ={" "}
@@ -83,6 +99,7 @@ export const SimpleMath: FunctionComponent = () => {
         ) : (
           <div className="ml-3 flex">
             <input
+              min={0}
               onKeyPress={handleKeyPress}
               ref={inputRef}
               value={answer}
@@ -92,7 +109,7 @@ export const SimpleMath: FunctionComponent = () => {
               type="number"
             />
             <div
-              className="bg-red-400 text-white rounded cursor-pointer p-4 ml-3"
+              className="bg-red-400 text-white rounded cursor-pointer p-4 ml-3 duration-200 hover:bg-red-600"
               onClick={handleSubmit}
             >
               GO!
@@ -123,9 +140,7 @@ export const SimpleMath: FunctionComponent = () => {
                 )`,
                 }}
                 className="absolute top-0 left-0"
-              >
-                cross
-              </div>
+              />
             </div>
           );
         })}
