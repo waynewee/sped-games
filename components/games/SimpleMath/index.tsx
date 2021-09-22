@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 import { arrayFromNum, randInt } from "../../../utils";
-import listReactFiles from "list-react-files";
 //config
 const config = {
   max: 20,
