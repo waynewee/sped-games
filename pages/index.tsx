@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { Footer } from "../components/Footer";
-import { SimpleMath } from "../components/Games/SimpleMath";
+import { SimpleMath } from "../components/games/SimpleMath";
 import { Meta } from "../components/Meta";
 
 export default function Home() {
