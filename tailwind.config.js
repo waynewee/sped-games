@@ -3,6 +3,9 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      backgroundImage: {
+        main: "url('/background.jpg')",
+      },
       animation: {
         starSpin: "starSpin 4s ease-in-out infinite",
       },

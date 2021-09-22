@@ -25,21 +25,29 @@ const cartoons = [
   "/boy.png",
   "/butterfly.png",
   "/cat.png",
-  "/pencil.webp",
   "/rabbit.png",
   "/rubiks-cube.png",
   "/samsung-phone.png",
 ];
 
-export const SimpleMath: FunctionComponent = () => {
+interface SimpleMathProps {
+  incrementScore: () => void;
+  decrementLives: () => void;
+}
+
+export const SimpleMath: FunctionComponent<SimpleMathProps> = ({
+  incrementScore,
+  decrementLives,
+}) => {
   const [firstNum, setFirstNum] = useState(defaultFirstNum);
   const [secondNum, setSecondNum] = useState(defaultSecondNum);
   const [numArray, setNumArray] = useState(arrayFromNum(defaultFirstNum));
   const [showAnswer, setShowAnswer] = useState(false);
   const [answer, setAnswer] = useState(undefined);
-  const [score, setScore] = useState(0);
   const [title, setTitle] = useState(TITLE_MAIN);
   const [cartoonIndex, setCartoonIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [crossedOut, setCrossedOut] = useState({});
 
   useEffect(() => {
     setCartoonIndex(cartoonIndex + 1);
@@ -48,6 +56,7 @@ export const SimpleMath: FunctionComponent = () => {
     setSecondNum(secondNum);
     setShowAnswer(false);
     setAnswer(undefined);
+    setCrossedOut({});
     if (inputRef.current) {
       //@ts-ignore
       inputRef.current.value = undefined;
@@ -68,11 +77,13 @@ export const SimpleMath: FunctionComponent = () => {
   const handleNext = () => {
     const [nextFirstNum] = generateNums();
 
-    setFirstNum(nextFirstNum);
-  };
+    setLoading(true);
 
-  const handleShowAnswer = () => {
-    setShowAnswer(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
+
+    setFirstNum(nextFirstNum);
   };
 
   const handleInputChange = (e) => {
@@ -80,12 +91,18 @@ export const SimpleMath: FunctionComponent = () => {
   };
 
   const handleSubmit = () => {
+    if (answer === undefined) {
+      return;
+    }
+
     if (firstNum - secondNum === answer) {
-      setScore(score + 1);
+      incrementScore();
       setShowAnswer(true);
       return;
     }
 
+    setAnswer(null);
+    decrementLives();
     setTitle(TITLE_ERROR);
   };
 
@@ -96,86 +113,121 @@ export const SimpleMath: FunctionComponent = () => {
   };
 
   return (
-    <>
-      <div className="fixed top-8 right-16">
-        <div className="flex items-center">
-          <img className="h-24 animate-starSpin" src={"/smiling-star.png"} />
-          <div className="ml-4 text-8xl font-medium">{score}</div>
-        </div>
-      </div>
+    <div className="bg-white shadow-2xl p-12 rounded-xl">
       <div className="text-6xl font-medium mb-12">{title}</div>
-      <div className="flex mb-12 justify-center items-center text-5xl">
-        <div suppressHydrationWarning className="">
-          {firstNum} - {secondNum} ={" "}
-        </div>
-        {showAnswer ? (
-          <div className="ml-3">{firstNum - secondNum}</div>
-        ) : (
-          <div className="ml-3 flex">
-            <input
-              min={0}
-              onKeyPress={handleKeyPress}
-              ref={inputRef}
-              value={answer}
-              placeholder="?"
-              className="border-gray-300 rounded w-24 text-center"
-              onChange={handleInputChange}
-              type="number"
-            />
-            <div
-              className="bg-red-400 text-white rounded cursor-pointer p-4 ml-3 duration-200 hover:bg-red-600"
-              onClick={handleSubmit}
-            >
-              GO!
-            </div>
+      {loading ? (
+        <div className="relative">
+          <div className="absolute text-white font-bold text-4xl h-full w-full flex justify-center items-center">
+            Loading...
           </div>
-        )}
-      </div>
-      <div
-        ref={gameBoardRef}
-        style={{ width: 800 }}
-        className="flex flex-wrap justify-center items-center mb-12 mx-auto"
-      >
-        {numArray.map((_, index) => {
-          return (
-            <div
-              key={index}
-              className="m-2 h-24 w-24 relative flex justify-center items-center"
-            >
-              <img
-                className="max-w-full max-h-full"
-                src={cartoons[cartoonIndex % cartoons.length]}
-              />
-              <div
-                style={{
-                  visibility:
-                    index >= firstNum - secondNum && showAnswer
-                      ? "visible"
-                      : "hidden",
-                  content: `url(
-                  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 100 100'><path d='M100 0 L0 100 ' stroke='red' stroke-width='4'/><path d='M0 0 L100 100 ' stroke='red' stroke-width='4'/></svg>"
-                )`,
-                }}
-                className="absolute top-0 left-0"
-              />
+          <img className="w-full rounded-2xl" src="/clouds-loader.gif" />
+        </div>
+      ) : (
+        <>
+          <div className="flex mb-12 justify-center items-center text-5xl">
+            <div suppressHydrationWarning className="">
+              {firstNum} - {secondNum} ={" "}
             </div>
-          );
-        })}
-      </div>
-      <div className="flex justify-center">
-        <button
-          className="mx-2 px-3 py-1 bg-indigo-400 rounded font-bold"
-          onClick={handleNext}
-        >
-          Next
-        </button>
-        <button
-          className="mx-2 px-3 py-1 bg-indigo-800 rounded font-bold text-white"
-          onClick={handleShowAnswer}
-        >
-          Show Answer
-        </button>
-      </div>
-    </>
+            {showAnswer ? (
+              <div className="ml-3 font-medium underline">
+                {firstNum - secondNum}
+              </div>
+            ) : (
+              <div className="ml-3 flex">
+                <input
+                  min={0}
+                  onKeyPress={handleKeyPress}
+                  ref={inputRef}
+                  value={answer}
+                  placeholder="?"
+                  className="bg-gray-100 w-32 text-center focus:outline-none rounded-lg py-1 px-3"
+                  onChange={handleInputChange}
+                  type="number"
+                />
+              </div>
+            )}
+          </div>
+          <div
+            ref={gameBoardRef}
+            style={{ width: 800 }}
+            className="flex flex-wrap justify-center items-center mb-12 mx-auto"
+          >
+            {numArray.map((_, index) => {
+              return (
+                <div
+                  onClick={() =>
+                    setCrossedOut({
+                      ...crossedOut,
+                      [index]: !crossedOut[index],
+                    })
+                  }
+                  key={index}
+                  className="m-2 h-24 w-24 relative flex justify-center items-center duration-200 hover:opacity-80 cursor-pointer"
+                >
+                  <img
+                    className="max-w-full max-h-full"
+                    src={cartoons[cartoonIndex % cartoons.length]}
+                  />
+                  <div
+                    style={{
+                      display: crossedOut[index] ? "block" : "none",
+                      content: `url(
+                    "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 100 100'><path d='M100 0 L0 100 ' stroke='red' stroke-width='4'/><path d='M0 0 L100 100 ' stroke='red' stroke-width='4'/></svg>"
+                  )`,
+                    }}
+                    className="absolute top-0 left-0"
+                  />
+                </div>
+              );
+            })}
+          </div>
+          <div>
+            {!showAnswer ? (
+              <div className="border-4 border-yellow-400 flex w-max rounded-lg mx-auto">
+                <button
+                  className="bg-yellow-400 border-2 p-2 border-white font-bold text-white rounded-lg flex items-center text-3xl"
+                  onClick={handleSubmit}
+                >
+                  <svg
+                    viewBox="64 64 896 896"
+                    focusable="false"
+                    data-icon="check-circle"
+                    width="1em"
+                    height="1em"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M699 353h-46.9c-10.2 0-19.9 4.9-25.9 13.3L469 584.3l-71.2-98.8c-6-8.3-15.6-13.3-25.9-13.3H325c-6.5 0-10.3 7.4-6.5 12.7l124.6 172.8a31.8 31.8 0 0051.7 0l210.6-292c3.9-5.3.1-12.7-6.4-12.7z"></path>
+                    <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"></path>
+                  </svg>
+                  <div className="ml-2">CHECK ANSWER</div>
+                </button>
+              </div>
+            ) : (
+              <div className="border-4 border-green-400 flex w-max rounded-lg mx-auto">
+                <button
+                  className="bg-green-400 border-2 p-2 border-white font-bold text-white rounded-lg flex items-center text-3xl"
+                  onClick={handleNext}
+                >
+                  <svg
+                    viewBox="64 64 896 896"
+                    focusable="false"
+                    data-icon="right-circle"
+                    width="1em"
+                    height="1em"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M666.7 505.5l-246-178A8 8 0 00408 334v46.9c0 10.2 4.9 19.9 13.2 25.9L566.6 512 421.2 617.2c-8.3 6-13.2 15.6-13.2 25.9V690c0 6.5 7.4 10.3 12.7 6.5l246-178c4.4-3.2 4.4-9.8 0-13z"></path>
+                    <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"></path>
+                  </svg>
+                  <div className="ml-2">NEXT QUESTION</div>
+                </button>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+    </div>
   );
 };
