@@ -81,7 +81,7 @@ export const SimpleMath: FunctionComponent<SimpleMathProps> = ({
 
     setTimeout(() => {
       setLoading(false);
-    }, 500);
+    }, 800);
 
     setFirstNum(nextFirstNum);
   };
