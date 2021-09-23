@@ -179,7 +179,7 @@ export const SimpleMath: FunctionComponent<SimpleMathProps> = ({
                   key={index}
                   className="m-2 h-24 w-24 bg-gray-100 rounded-xl p-3 relative flex justify-center items-center duration-200 hover:shadow-lg cursor-pointer"
                 >
-                  <div className="absolute left-2 top-2">{index + 1}</div>
+                  {/* <div className="absolute left-2 top-2">{index + 1}</div> */}
                   <img
                     className="max-w-full max-h-full animate-appear"
                     src={cartoons[cartoonIndex % cartoons.length]}
