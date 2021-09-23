@@ -124,12 +124,15 @@ export const SimpleMath: FunctionComponent<SimpleMathProps> = ({
       {loading ? (
         <div
           style={{ backgroundColor: "#08aae1" }}
-          className="relative rounded-2xl bg-red-500 h-96 w-full"
+          className="relative rounded-2xl bg-red-500 h-96 w-96"
         >
-          <div className="absolute text-white font-bold text-4xl h-full w-full flex justify-center items-center">
+          <div className="absolute text-white font-bold text-4xl h-full w-full flex justify-center items-center animate-appear">
             Loading...
           </div>
-          <img className="w-full h-full rounded-2xl" src="/clouds-loader.gif" />
+          <img
+            className="w-96 h-96 rounded-2xl animate-appear"
+            src="/clouds-loader.gif"
+          />
         </div>
       ) : (
         <>
@@ -178,7 +181,7 @@ export const SimpleMath: FunctionComponent<SimpleMathProps> = ({
                 >
                   <div className="absolute left-2 top-2">{index + 1}</div>
                   <img
-                    className="max-w-full max-h-full"
+                    className="max-w-full max-h-full animate-appear"
                     src={cartoons[cartoonIndex % cartoons.length]}
                   />
                   <div

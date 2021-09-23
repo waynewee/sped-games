@@ -11,12 +11,17 @@ module.exports = {
       },
       animation: {
         starSpin: "starSpin 4s ease-in-out infinite",
+        appear: "appear 0.5s ease-in",
       },
       keyframes: {
         starSpin: {
           "0%": { transform: "rotate(0deg)" },
           "30%": { transform: "rotate(360deg)" },
           "60%, 100%": { transform: "rotate(0deg)" },
+        },
+        appear: {
+          "0%": { opacity: 0 },
+          "100%": { opacity: 1 },
         },
       },
     },
