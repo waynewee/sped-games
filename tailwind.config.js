@@ -11,7 +11,7 @@ module.exports = {
       },
       animation: {
         starSpin: "starSpin 4s ease-in-out infinite",
-        appear: "appear 0.5s ease-in",
+        appear: "appear 0.2s ease-in",
       },
       keyframes: {
         starSpin: {
