@@ -2,6 +2,9 @@ module.exports = {
   purge: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
   darkMode: false, // or 'media' or 'class'
   theme: {
+    fontFamily: {
+      bubblegum: ["'Bubblegum Sans'", "cursive"],
+    },
     extend: {
       backgroundImage: {
         main: "url('/background.jpg')",
@@ -19,7 +22,10 @@ module.exports = {
     },
   },
   variants: {
-    extend: {},
+    extend: {
+      cursor: ["disabled"],
+      borderColor: ["disabled"],
+    },
   },
   plugins: [],
 };

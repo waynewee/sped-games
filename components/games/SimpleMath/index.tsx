@@ -87,7 +87,13 @@ export const SimpleMath: FunctionComponent<SimpleMathProps> = ({
   };
 
   const handleInputChange = (e) => {
-    setAnswer(parseInt(e.target.value));
+    const value = parseInt(e.target.value);
+
+    if (isNaN(value)) {
+      setAnswer(undefined);
+    } else {
+      setAnswer(value);
+    }
   };
 
   const handleSubmit = () => {
@@ -116,15 +122,18 @@ export const SimpleMath: FunctionComponent<SimpleMathProps> = ({
     <div className="bg-white shadow-2xl p-12 rounded-xl">
       <div className="text-6xl font-medium mb-12">{title}</div>
       {loading ? (
-        <div className="relative">
+        <div
+          style={{ backgroundColor: "#08aae1" }}
+          className="relative rounded-2xl bg-red-500 h-96 w-full"
+        >
           <div className="absolute text-white font-bold text-4xl h-full w-full flex justify-center items-center">
             Loading...
           </div>
-          <img className="w-full rounded-2xl" src="/clouds-loader.gif" />
+          <img className="w-full h-full rounded-2xl" src="/clouds-loader.gif" />
         </div>
       ) : (
         <>
-          <div className="flex mb-12 justify-center items-center text-5xl">
+          <div className="flex mb-8 justify-center items-center text-5xl">
             <div suppressHydrationWarning className="">
               {firstNum} - {secondNum} ={" "}
             </div>
@@ -147,6 +156,9 @@ export const SimpleMath: FunctionComponent<SimpleMathProps> = ({
               </div>
             )}
           </div>
+          <div className="text-xl text-gray-800 underline">
+            Click on the images below to cross them out!
+          </div>
           <div
             ref={gameBoardRef}
             style={{ width: 800 }}
@@ -162,8 +174,9 @@ export const SimpleMath: FunctionComponent<SimpleMathProps> = ({
                     })
                   }
                   key={index}
-                  className="m-2 h-24 w-24 relative flex justify-center items-center duration-200 hover:opacity-80 cursor-pointer"
+                  className="m-2 h-24 w-24 bg-gray-100 rounded-xl p-3 relative flex justify-center items-center duration-200 hover:shadow-lg cursor-pointer"
                 >
+                  <div className="absolute left-2 top-2">{index + 1}</div>
                   <img
                     className="max-w-full max-h-full"
                     src={cartoons[cartoonIndex % cartoons.length]}
@@ -183,9 +196,18 @@ export const SimpleMath: FunctionComponent<SimpleMathProps> = ({
           </div>
           <div>
             {!showAnswer ? (
-              <div className="border-4 border-yellow-400 flex w-max rounded-lg mx-auto">
+              <div
+                className={`border-4 flex w-max rounded-lg mx-auto ${
+                  answer === undefined ? `border-gray-400` : "border-yellow-400"
+                }`}
+              >
                 <button
-                  className="bg-yellow-400 border-2 p-2 border-white font-bold text-white rounded-lg flex items-center text-3xl"
+                  disabled={answer === undefined}
+                  className={`border-2 p-2 border-white font-bold text-white rounded-lg flex items-center text-3xl ${
+                    answer === undefined
+                      ? `bg-gray-400 cursor-not-allowed`
+                      : `bg-yellow-400`
+                  }`}
                   onClick={handleSubmit}
                 >
                   <svg
@@ -209,6 +231,7 @@ export const SimpleMath: FunctionComponent<SimpleMathProps> = ({
                   className="bg-green-400 border-2 p-2 border-white font-bold text-white rounded-lg flex items-center text-3xl"
                   onClick={handleNext}
                 >
+                  <div className="mr-2">NEXT QUESTION</div>
                   <svg
                     viewBox="64 64 896 896"
                     focusable="false"
@@ -221,7 +244,6 @@ export const SimpleMath: FunctionComponent<SimpleMathProps> = ({
                     <path d="M666.7 505.5l-246-178A8 8 0 00408 334v46.9c0 10.2 4.9 19.9 13.2 25.9L566.6 512 421.2 617.2c-8.3 6-13.2 15.6-13.2 25.9V690c0 6.5 7.4 10.3 12.7 6.5l246-178c4.4-3.2 4.4-9.8 0-13z"></path>
                     <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"></path>
                   </svg>
-                  <div className="ml-2">NEXT QUESTION</div>
                 </button>
               </div>
             )}

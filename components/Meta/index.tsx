@@ -9,7 +9,11 @@ export const Meta: FunctionComponent<IMeta> = ({ title }) => {
   return (
     <Head>
       <title>{title}</title>
-      <link rel="icon" href="/favicon.ico" />s
+      <link rel="icon" href="/favicon.ico" />
+      <style>
+        @import
+        url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap');
+      </style>
     </Head>
   );
 };
