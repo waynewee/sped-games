@@ -1,6 +1,14 @@
-import React, { FunctionComponent, useEffect, useRef, useState } from "react";
+import React, {
+  FunctionComponent,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { Button } from "../../../components/UI/Button";
+import { GameContext } from "../../../contexts/GameContext";
 import { arrayFromNum, randInt } from "../../../utils";
-//config
+
 const config = {
   max: 20,
   min: 1,
@@ -30,23 +38,18 @@ const cartoons = [
   "/samsung-phone.png",
 ];
 
-interface SimpleMathProps {
-  incrementScore: () => void;
-  decrementLives: () => void;
-}
-
-export const SimpleMath: FunctionComponent<SimpleMathProps> = ({
-  incrementScore,
-  decrementLives,
-}) => {
+export const SubtractionGame: FunctionComponent = () => {
+  const { submitScore, setIsGameOver, submitSkillPoints } =
+    useContext(GameContext);
+  const [score, setScore] = useState(0);
+  const [lives, setLives] = useState(3);
   const [firstNum, setFirstNum] = useState(defaultFirstNum);
   const [secondNum, setSecondNum] = useState(defaultSecondNum);
   const [numArray, setNumArray] = useState(arrayFromNum(defaultFirstNum));
   const [showAnswer, setShowAnswer] = useState(false);
-  const [answer, setAnswer] = useState(undefined);
+  const [answer, setAnswer] = useState("");
   const [title, setTitle] = useState(TITLE_MAIN);
   const [cartoonIndex, setCartoonIndex] = useState(0);
-  const [loading, setLoading] = useState(false);
   const [crossedOut, setCrossedOut] = useState({});
 
   useEffect(() => {
@@ -55,11 +58,11 @@ export const SimpleMath: FunctionComponent<SimpleMathProps> = ({
     const secondNum = randInt(config.min, firstNum - 1);
     setSecondNum(secondNum);
     setShowAnswer(false);
-    setAnswer(undefined);
+    setAnswer("");
     setCrossedOut({});
     if (inputRef.current) {
       //@ts-ignore
-      inputRef.current.value = undefined;
+      inputRef.current.value = null;
     }
   }, [firstNum]);
 
@@ -71,23 +74,36 @@ export const SimpleMath: FunctionComponent<SimpleMathProps> = ({
     }
   }, [showAnswer]);
 
+  useEffect(() => {
+    if (lives <= 0) {
+      submitScore(score, "math");
+
+      let skillPoints = 0;
+
+      if (score >= 10) {
+        skillPoints = 1;
+      } else if (score >= 20) {
+        skillPoints = 2;
+      } else if (score >= 40) {
+        skillPoints = 3;
+      }
+
+      submitSkillPoints(skillPoints, "math");
+      setIsGameOver(true);
+    }
+  }, [lives]);
+
   const gameBoardRef = useRef();
   const inputRef = useRef();
 
   const handleNext = () => {
     const [nextFirstNum] = generateNums();
 
-    setLoading(true);
-
-    setTimeout(() => {
-      setLoading(false);
-    }, 800);
-
     setFirstNum(nextFirstNum);
   };
 
   const handleInputChange = (e) => {
-    const value = parseInt(e.target.value);
+    const value = e.target.value;
 
     if (isNaN(value)) {
       setAnswer(undefined);
@@ -101,14 +117,13 @@ export const SimpleMath: FunctionComponent<SimpleMathProps> = ({
       return;
     }
 
-    if (firstNum - secondNum === answer) {
-      incrementScore();
+    if (firstNum - secondNum === parseInt(answer)) {
       setShowAnswer(true);
+      setScore(score + 1);
       return;
     }
-
-    setAnswer(null);
-    decrementLives();
+    setLives(lives - 1);
+    setAnswer("");
     setTitle(TITLE_ERROR);
   };
 
@@ -121,7 +136,11 @@ export const SimpleMath: FunctionComponent<SimpleMathProps> = ({
   return (
     <div className="bg-white shadow-2xl p-12 rounded-xl">
       <div className="text-6xl font-medium mb-12">{title}</div>
-      {loading ? (
+      <div>
+        Score: {score}
+        Lives: {lives}
+      </div>
+      {false ? (
         <div
           style={{ backgroundColor: "#08aae1" }}
           className="relative rounded-2xl bg-red-500 h-96 w-96"
@@ -199,56 +218,13 @@ export const SimpleMath: FunctionComponent<SimpleMathProps> = ({
           </div>
           <div>
             {!showAnswer ? (
-              <div
-                className={`border-4 flex w-max rounded-lg mx-auto ${
-                  answer === undefined ? `border-gray-400` : "border-yellow-400"
-                }`}
-              >
-                <button
-                  disabled={answer === undefined}
-                  className={`border-2 p-2 border-white font-bold text-white rounded-lg flex items-center text-3xl ${
-                    answer === undefined
-                      ? `bg-gray-400 cursor-not-allowed`
-                      : `bg-yellow-400`
-                  }`}
-                  onClick={handleSubmit}
-                >
-                  <svg
-                    viewBox="64 64 896 896"
-                    focusable="false"
-                    data-icon="check-circle"
-                    width="1em"
-                    height="1em"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path d="M699 353h-46.9c-10.2 0-19.9 4.9-25.9 13.3L469 584.3l-71.2-98.8c-6-8.3-15.6-13.3-25.9-13.3H325c-6.5 0-10.3 7.4-6.5 12.7l124.6 172.8a31.8 31.8 0 0051.7 0l210.6-292c3.9-5.3.1-12.7-6.4-12.7z"></path>
-                    <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"></path>
-                  </svg>
-                  <div className="ml-2">CHECK ANSWER</div>
-                </button>
-              </div>
+              <Button disabled={answer === ""} onClick={handleSubmit}>
+                <h3>CHECK ANSWER</h3>
+              </Button>
             ) : (
-              <div className="border-4 border-green-400 flex w-max rounded-lg mx-auto">
-                <button
-                  className="bg-green-400 border-2 p-2 border-white font-bold text-white rounded-lg flex items-center text-3xl"
-                  onClick={handleNext}
-                >
-                  <div className="mr-2">NEXT QUESTION</div>
-                  <svg
-                    viewBox="64 64 896 896"
-                    focusable="false"
-                    data-icon="right-circle"
-                    width="1em"
-                    height="1em"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path d="M666.7 505.5l-246-178A8 8 0 00408 334v46.9c0 10.2 4.9 19.9 13.2 25.9L566.6 512 421.2 617.2c-8.3 6-13.2 15.6-13.2 25.9V690c0 6.5 7.4 10.3 12.7 6.5l246-178c4.4-3.2 4.4-9.8 0-13z"></path>
-                    <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"></path>
-                  </svg>
-                </button>
-              </div>
+              <Button onClick={handleNext} color="green-400">
+                <h3>NEXT QUESTION</h3>
+              </Button>
             )}
           </div>
         </>

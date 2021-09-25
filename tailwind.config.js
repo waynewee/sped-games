@@ -2,16 +2,29 @@ module.exports = {
   purge: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
   darkMode: false, // or 'media' or 'class'
   theme: {
+    borderRadius: {
+      "4xl": "3rem",
+    },
+    backgroundColor: (theme) => ({
+      ...theme("colors"),
+      primary: "#3490dc",
+      secondary: "#ffed4a",
+      danger: "#e3342f",
+    }),
+    backgroundSize: {
+      full: "100% 100%",
+    },
     fontFamily: {
-      bubblegum: ["'Bubblegum Sans'", "cursive"],
+      handwriting: ["'Patrick Hand'", "cursive"],
     },
     extend: {
       backgroundImage: {
-        main: "url('/background.jpg')",
+        yellow:
+          "linear-gradient(0deg, rgba(254,243,199,1) 0%, rgba(251,191,36,1) 50%)",
       },
       animation: {
         starSpin: "starSpin 4s ease-in-out infinite",
-        appear: "appear 0.5s ease-in",
+        appear: "appear 0.3s cubic-bezier(0.3, 0, 0.4, 1)",
       },
       keyframes: {
         starSpin: {

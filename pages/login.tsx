@@ -5,14 +5,14 @@ import { PageWrapper } from "../components/PageWrapper";
 import { Meta } from "../components/UI/Meta";
 import { AuthContext } from "../contexts/AuthContext";
 
-export default function HomePage() {
+export default function LoginPage() {
   const { isLoggedIn, isAuthLoaded } = useContext(AuthContext);
 
   return (
     <PageWrapper>
       <Meta title="Play N' Learn" />
 
-      <div>LANDING</div>
+      {isAuthLoaded ? isLoggedIn ? <Dashboard /> : <Login /> : null}
     </PageWrapper>
   );
 }

@@ -1,3 +1,56 @@
+@import url("https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap");
+
 @tailwind base;
+
+@layer base {
+  h1 {
+    font-size: 72px;
+  }
+  h2 {
+    font-size: 48px;
+  }
+  h3 {
+    font-size: 32px;
+  }
+  h4 {
+    font-size: 28px;
+  }
+  h5 {
+    font-size: 24px;
+  }
+
+  p {
+    font-size: 18px;
+  }
+
+  input[disabled] {
+    @apply cursor-not-allowed;
+  }
+  button[disabled] {
+    @apply bg-gray-400;
+    @apply cursor-not-allowed;
+  }
+
+  a {
+    @apply text-blue-500;
+    @apply cursor-pointer;
+  }
+
+  a:hover {
+    @apply underline;
+  }
+}
+
 @tailwind components;
+
 @tailwind utilities;
+
+@layer utilities {
+  .max-h-0 {
+    max-height: 0;
+  }
+
+  .max-h-screen {
+    max-height: 100vh;
+  }
+}
